@@ -31,6 +31,7 @@ There are few notebook storage systems available for a use out of the box:
   * (default) use local file system and version it using local Git repository - `GitNotebookRepo`
   * all notes are saved in the notebook folder in your local File System - `VFSNotebookRepo`
   * storage using Amazon S3 service - `S3NotebookRepo`
+  * storage using Minio - `MinioNotebookRepo`
   * storage using Azure service - `AzureNotebookRepo`
 
 Multiple storage systems can be used at the same time by providing a comma-separated list of the class-names in the configuration.
@@ -165,7 +166,84 @@ Or using the following setting in **zeppelin-site.xml**:
   <description>Custom encryption materials provider used to encrypt notebook data in S3</description>
 ```   
 
-</br>
+## Notebook Storage in Minio <a name="Minio"></a>
+
+To enable Minio storage fill in your `Access Key`, `Secret Key` and `Minio endpoint` 
+as properties in the file **zeppelin-site.xml**:
+
+```
+<property>
+  <name>zeppelin.notebook.minio.accesskey</name>
+  <value>access_key</value>
+  <description>access key for minio login</description>
+</property>
+
+<property>
+  <name>zeppelin.notebook.minio.secretkey</name>
+  <value>secret_key</value>
+  <description>secret key for minio login</description>
+</property>
+
+<property>
+  <name>zeppelin.notebook.minio.endpoint</name>
+  <value>http://localhost:9000</value>
+  <description>endpoint for minio storage</description>
+</property>
+```
+
+To disable HTTPS when connecting to Minio server, uncomment and configure property 
+`zeppelin.notebook.minio.https` in **zeppelin-site.xml**:
+
+```
+<property>
+  <name>zeppelin.notebook.minio.https</name>
+  <value>false</value>
+  <description>Use encrypted connection to Minio server</description>
+</property>
+```  
+
+The following folder structure will be created in Minio for each notebook:
+
+```
+bucket_name/user/notebook/notebook-id/
+```
+
+`bucket_name` and `user` can also be configured in **zeppelin-site.xml**: 
+
+```
+<property>
+  <name>zeppelin.notebook.minio.bucket</name>
+  <value>zeppelin</value>
+  <description>bucket name for notebook storage</description>
+</property>
+
+<property>
+  <name>zeppelin.notebook.minio.user</name>
+  <value>user</value>
+  <description>user name for minio folder structure</description>
+</property>
+```
+
+To finally enable Minio storage uncomment the next property for use `MinioNotebookRepo` class:
+
+```
+<property>
+  <name>zeppelin.notebook.storage</name>
+  <value>org.apache.zeppelin.notebook.repo.MinioNotebookRepo</value>
+  <description>notebook persistence layer implementation</description>
+</property>
+```
+
+And comment out the next property to disable local git notebook storage (the default):
+
+```
+<property>
+  <name>zeppelin.notebook.storage</name>
+  <value>org.apache.zeppelin.notebook.repo.GitNotebookRepo</value>
+  <description>versioned notebook persistence layer implementation</description>
+</property>
+```
+
 ## Notebook Storage  in Azure <a name="Azure"></a>
 
 Using `AzureNotebookRepo` you can connect your Zeppelin with your Azure account for notebook storage.
