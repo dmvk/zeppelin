@@ -110,7 +110,7 @@ public class MinioNotebookRepo implements NotebookRepo {
       throw new IOException("Unable to get note from Minio", e);
     }
 
-    Note note = Note.fromJson(noteJson);
+    Note note = Note.GSON.fromJson(noteJson, Note.class);
     for (Paragraph p : note.getParagraphs()) {
       if (p.getStatus() == Job.Status.PENDING || p.getStatus() == Job.Status.RUNNING) {
         p.setStatus(Job.Status.ABORT);
@@ -122,7 +122,7 @@ public class MinioNotebookRepo implements NotebookRepo {
 
   @Override
   public void save(Note note, AuthenticationInfo subject) throws IOException {
-    String json = note.toJson();
+    String json = Note.GSON.toJson(note);
     String key = user + "/" + "notebook" + "/" + note.getId() + "/" + "note.json";
 
     File file = File.createTempFile("note", "json");
