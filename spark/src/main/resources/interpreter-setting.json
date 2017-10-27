@@ -109,7 +109,7 @@
       "zeppelin.dep.additionalRemoteRepository": {
         "envName": null,
         "propertyName": null,
-        "defaultValue": "spark-packages,http://dl.bintray.com/spark-packages/maven,false;",
+        "defaultValue": "",
         "description": "A list of 'id,remote-repository-URL,is-snapshot;' for each remote repository."
       }
     },
